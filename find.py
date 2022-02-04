@@ -17,23 +17,22 @@ if not response:
 json_response = response.json()
 toponym1 = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"][
     "boundedBy"]["Envelope"]
-low_corn, upper_corn = toponym1["lowerCorner"], toponym1["upperCorner"] # размеры объекта
-delta_spn = chk_spn(low_corn, upper_corn)
-print(delta_spn)
+low_corn, upper_corn = toponym1["lowerCorner"], toponym1["upperCorner"]  # размеры объекта
+delta = chk_spn(low_corn, upper_corn)
+delta1, delta2 = delta
+
+# Координаты
 toponym = json_response["response"]["GeoObjectCollection"][
     "featureMember"][0]["GeoObject"]
-# Координаты центра топонима:
 toponym_coodrinates = toponym["Point"]["pos"]
-# Долгота и широта:
 toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
 
-delta = "0.005"
-
-# Собираем параметры для запроса к StaticMapsAPI:
+# запрос
 map_params = {
     "ll": ",".join([toponym_longitude, toponym_lattitude]),
-    "spn": ",".join([delta, delta]),
-    "l": "map"
+    "spn": ",".join([str(delta1), str(delta2)]),
+    "l": "map",
+    "pt": ",".join([toponym_longitude, toponym_lattitude])
 }
 
 map_api_server = "http://static-maps.yandex.ru/1.x/"
