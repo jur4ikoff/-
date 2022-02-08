@@ -1,6 +1,7 @@
 import os
 import sys
 import requests
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from check_coord import check_spn as chk_spn
@@ -14,13 +15,32 @@ class Example(QWidget):
     def __init__(self, coords, spn):
         super().__init__()
         self.coords = coords.replace(' ', '')
-        self.spn = spn
-        self.spn = self.spn + ',' + '' + self.spn
+        self.spn_input = spn
+        self.spn = self.spn_input + ',' + '' + self.spn_input
+        self.image = QLabel(self)
+        self.image.move(0, 0)
+        self.image.resize(600, 450)
         self.getImage()
-        self.initUI()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_PageDown:
+            if float(self.spn_input) < 40:
+                self.spn_input = str(float(self.spn_input) + 0.6)[:5]
+        if event.key() == Qt.Key_PageUp:
+            if float(self.spn_input) > 0.41:
+                self.spn_input = str(float(self.spn_input) - 0.4)[:5]
+            if float(self.spn_input) > 0.11 and float(self.spn_input) < 0.4:
+                self.spn_input = str(float(self.spn_input) - 0.1)[:5]
+            if float(self.spn_input) > 0.021 and float(self.spn_input) < 0.1:
+                self.spn_input = str(float(self.spn_input) - 0.02)[:5]
+            if float(self.spn_input) > 0.0021 and float(self.spn_input) < 0.02:
+                self.spn_input = str(float(self.spn_input) - 0.002)[:5]
+        self.getImage()
 
     def getImage(self):
         map_api_server = "http://static-maps.yandex.ru/1.x/"
+        self.spn = self.spn_input + ',' + '' + self.spn_input
+        print(self.spn)
         map_params = {
             "ll": self.coords,
             "spn": self.spn,
@@ -37,14 +57,7 @@ class Example(QWidget):
         with open(self.map_file, "wb") as file:
             file.write(self.response.content)
 
-    def initUI(self):
-        self.setGeometry(100, 100, *SCREEN_SIZE)
-        self.setWindowTitle('Отображение карты')
-
         self.pixmap = QPixmap(self.map_file)
-        self.image = QLabel(self)
-        self.image.move(0, 0)
-        self.image.resize(600, 450)
         self.image.setPixmap(self.pixmap)
 
     def closeEvent(self, event):
