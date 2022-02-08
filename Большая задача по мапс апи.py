@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from check_coord import check_spn as chk_spn
 
 SCREEN_SIZE = [600, 450]
-coords = input('Введите координаты через запятую: ')  # coord1, coord2
-spn = input('Введите масштаб: ')
+coords = "37.404304, 55.652923"
+spn = '1'
 
 
 class Example(QWidget):
